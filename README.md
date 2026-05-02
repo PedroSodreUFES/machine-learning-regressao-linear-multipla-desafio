@@ -7,8 +7,8 @@
 ![Gradio](https://img.shields.io/badge/Gradio-FF6F00?style=for-the-badge&logo=gradio&logoColor=white)
 ![Joblib](https://img.shields.io/badge/Joblib-FF6F00?style=for-the-badge&logo=python&logoColor=white)
 ![Pingouin](https://img.shields.io/badge/Pingouin-FF6F00?style=for-the-badge&logo=python&logoColor=white)
-# Modelo de Regressão Linear Múltipla: Previsibilidade de valor de Aluguel
-Um modelo em **Regressão Linear Múltipla** para prever o valor do aluguel de um imóvel com base em suas características, sendo estas:
+# Modelo de regressão linear múltipla: previsibilidade de valor de aluguel
+Um modelo em **regressão linear múltipla** para prever o valor do aluguel de um imóvel com base em suas características, sendo estas:
 + Tamanho em metros quadrados.
 + Número de quartos.
 + Idade do imóvel.
