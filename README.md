@@ -51,11 +51,12 @@ python model_aluguel.py
 ![Boxplot n_quartos e aluguel](./dataviz/n-quartos-x-aluguel-boxplot.png)
 ![Scatter m_quadrados e aluguel](./dataviz/metros-quadrados-x-aluguel-scatter.png)
 
-Pelo pairplot é possível enxergar que em termos das variáveis numericas que o *número de quartos* afeta o aluguel, e, principalmente, os *metros quadrados* afetam o valor do aluguel. Enquanto isso a *idade* não afeta de forma clara o valor.
+Pelo pairplot é possível enxergar que em termos das variáveis numericas que o *número de quartos* afeta o aluguel, e, principalmente, os *metros quadrados* afetam o valor do aluguel, em que ambas mostram uma correlação positiva. Enquanto isso a *idade* não apresenta uma correlação clara com o valor do aluguel.
+
 #### Variávies categóricas
 ![Periferia](./dataviz/periferia-x-aluguel-boxplot.png)
 
-Embora afete pouco, é possível notar que não estar na periferia aumenta o aluguel. Já o resto das variáveis categóricas não afeta o modelo.
+Embora afete pouco, é possível notar que não estar na periferia aumenta o aluguel. Já o resto das variáveis categóricas afeta pouco o modelo por não mostrarem uma correlação forte com o aluguel.
 
 #### Por que um modelo linear ?
 
@@ -96,10 +97,11 @@ Com isso, houve o preprocessamento dos dados com o Column Transformer e a aplica
 
 > **H0**: *os resíduos seguem uma distribuição normal*<br/>
 > **H1**: *os resíduos não seguem uma distribuição normal*
-- Por ser abaixo de 0.05, Kolmogorov-Smirnov rejeitam a hipótese nula por haver evidência de distribuição não normal nos resíduos. OBS: Kolmogorov-Smirnov rejeitam fortemente por ser muito próximo de 0.
-- Por ser acima de 0.05, Shapiro-Wilk e Lilliefors aponta evidência de distribuição normal dos resíduos, logo não há evidência suficiente para rejeitar a hipótese nula.
+- Por ser abaixo de 0.05, Kolmogorov-Smirnov rejeita a hipótese nula por haver evidência de distribuição não normal nos resíduos. OBS: Kolmogorov-Smirnov rejeita fortemente por ser muito próximo de 0.
+- Por ser acima de 0.05, Shapiro-Wilk e Lilliefors apontam evidência de distribuição normal dos resíduos, logo ambas estatísticas não fornecem evidência suficiente para rejeitar a hipótese nula.
 
 ![QQplot](./dataviz/qqplot.png)
+
 O QQ-plot apresenta alinhamento dos resíduos à linha teórica (R² ≈ 0.975), indicando aproximação à normalidade, apesar de testes formais apontarem desvios estatisticamente significativos.
 
 **Por que isso acontece?**
