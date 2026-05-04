@@ -20,6 +20,7 @@ df_aluguel = pd.read_csv("./dataset/dataset_aluguel.csv")
 print(df_aluguel.info())
 print("\nRemovendo coluna id...\n")
 df_aluguel.drop(columns=['id'], inplace=True)
+df_aluguel['garagem'] = df_aluguel['garagem'].map({ 0: False, 1: True})
 df_aluguel.columns = [
     'metros_quadrados',
     'n_quartos',
@@ -30,6 +31,7 @@ df_aluguel.columns = [
     'aluguel'
 ]
 print(df_aluguel.describe())
+print(df_aluguel.info())
 
 # 2: Análise Exploratória dos Dados
 # Não há outliers nos valores
@@ -141,7 +143,7 @@ dict_predict = {
     'metros_quadrados': 174.86639612006326,
     'n_quartos': 4,
     'idade': 44.13181715946698,
-    'garagem': 0,
+    'garagem': False,
     'periferia': False,
     'suburbio': True,
 }
@@ -186,10 +188,7 @@ print(f"Kolmogorv-Smirnov p-value: {p_value_ks}")
 stat_ll, p_value_ll = lilliefors(x=residuos, dist='norm', pvalmethod='table')
 print(f"Lilliefors p-value: {p_value_ll}")
 
-pipe = Pipeline(steps=[
-    ('preprocessor', preprocessor)
-])
-X_test_transformed = pipe.fit_transform(X=X_test)
+X_test_transformed = model.named_steps['preprocessor'].transform(X=X_test)
 test_goldfeld = het_goldfeldquandt(residuos, X_test_transformed)
 p_value_goldfeld = test_goldfeld[1]
 print(f"Goldfeld p-value: {p_value_goldfeld}")
