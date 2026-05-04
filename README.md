@@ -48,65 +48,83 @@ python model_aluguel.py
 ### Análise do cenário
 ![Pairplot Dados](./dataviz/pairplot.png)
 #### Variáveis numéricas
-Pelo pairplot é possível enxergar que em termos das variáveis numericas, a altura e a idade não formam uma relação linear com o colesterol. Em compensação, o peso forma uma correlação linear positiva claramente. Quanto aos histogramas, percebe que os dados de idade e altura se encontram em uma distribuição aproximadamente uniforme, enquanto o peso e o colesterol formam uma distribuição normal.
+![Boxplot n_quartos e aluguel](./dataviz/n-quartos-x-aluguel-boxplot.png)
+![Scatter m_quadrados e aluguel](./dataviz/metros-quadrados-x-aluguel-scatter.png)
+
+Pelo pairplot é possível enxergar que em termos das variáveis numericas que o *número de quartos* afeta o aluguel, e, principalmente, os *metros quadrados* afetam o valor do aluguel. Enquanto isso a *idade* não afeta de forma clara o valor.
 #### Variávies categóricas
-![Fumante](./dataviz/fumante-por-colesterol-boxplot.png)
-![Grupo Sanguíneo](./dataviz/grupo-sanguineo-por-colesterol-boxplot.png)
-![Atividade Física](./dataviz/atividade-fisica-por-colesterol-boxplot.png)
-<br />
-Quanto à pessoa fumar, o gráfico é claro em que o fato de fumar eleva a possibilidade da pessoa ter mais colesterol. Já sobre a pessoa fazer atividades físicas, há uma correlação negativa, em que caso a pessoa seja muito engajada em atividades físicas, ela tende a ter menos colesterol. Em termos do grupo sanguíneo, aparentemente ser do grupo O ou B torna a pessoa propensa a ter menos colesterol, já ser do grupo A ou AB, o contrário ocorre.
+![Periferia](./dataviz/periferia-x-aluguel-boxplot.png)
+
+Embora afete pouco, é possível notar que não estar na periferia aumenta o aluguel. Já o resto das variáveis categóricas não afeta o modelo.
+
+#### Por que um modelo linear ?
+
+![Pearson](./dataviz/aluguel-pearson-corr-heatmap.png)
+![Spearman](./dataviz/aluguel-spearman-corr-heatmap.png)
+
+Pelas imagens é possível ver que a correlação de *Pearson* é mais forte que a de *Spearman*, pois seus resultados são mais distantes de 0. Isto é uma evidência de que o modelo linear é mais indicado para este cenário.
 
 ### Correção dos dados e outliers
-![Correlacao Com Colesterol](./dataviz/correlations-colesterol-heatmap.png)
 
-Há outliers no peso das pessoas, onde há pessoas com 15kg ou menos. Para o fim da pesquisa, considerando que a idade mínima é de 20 anos, levou-se em consideração somente pesos acima ou igual a 40kg. Nas colinas fumante, nível de atividade física e grupo sanguíneo, usou-se a moda para substituir os valores faltantes. Já nas colunas idade, peso e altura, usou-se a mediana. Na idade e na altura se justifica em razão de a média não ser um valor inteiro já no caso do peso, a mediana era próxima da média, então acompanhou as outras variáveis numéricas com a escolha da mediana.<br />
-Ao final, usou-se dummies para as colunas grupos sanguíneos e fumante, já que são variáveis categóricas nominais. Enquanto para atividade física, por ser uma variável categórica ordinal, usou-se o mapeamento de Baixo, Moderado e Alto para 1, 2, 3.<br>
-Pelo heatmap, vê-se que as variáveis mais correlacionadas linearmente pelo coeficiente de **Pearson** são o peso, o fato de o paciente fumar ou não e quão ela pratica atividades físicas.
+Pela descrição das métricas, é possível notar que não há outliers numéricos ou não numéricos no modelo. Além disso, não há dados faltantes. Isso significa que não há um imóvel com metros quadrados estranhos, valores fora do normal ou número de quartos impossíveis. As variáveis categóricas sempre assumem True ou False, logo é possível dizer que estão dentro do esperado.
+
 ### Treinamento do modelo
-Usou-se um dataset com 70% dos dados para treinamento e 30% para testes, e o modelo escolhido foi a regressão linear múltipla.
+Usou-se um dataset com 70% dos dados para treinamento e 30% para testes, e o modelo escolhido foi a *Regressão Linear Múltipla*.
+
+A técnica de transformer foi por colunas categóricas com OneHotEncoder, e colunas numéricas com StandardScaler. Por não haver colunas categóricas ordinais, não foi preciso usar colunas categóricas ordinais com OrdinalEncoder.
+
+Com isso, houve o preprocessamento dos dados com o Column Transformer e a aplicação do modelo de regressão linear.
+
 ### Métricas do modelo
 #### Métricas de linearidade e de outliers
-![Linearidade](./dataviz/linearidade-dos-residuos-scatter.png)
-1. Outliers: Pelos scatter dos resíduos, vê-se 11 de 300 pontos fora do intervalo +-2, logo há poucos outliers. 
-2. Modelo linear adequado e homocedasticidade: Os resíduos estão espalhados sem formar um padrão, o que indica que o modelo linear é adequado.
+![Linearidade](./dataviz/residuos-std-scatter.png)
+1. **Outliers**: Pelos scatter dos resíduos, vê-se 1 de 30 pontos fora do intervalo +-2, logo há somente 1 outlier. 
+2. Modelo linear adequado e ***homocedasticidade***: Os resíduos estão espalhados sem formar um padrão, o que indica que o modelo linear é adequado.
+
 #### Métricas do modelo
-| R²-Score| Rounded Mean Squared Error (RMSE) | Mean Absolute Error (MAE) |
+| R²-Score| Root Mean Squared Error (RMSE) | Mean Absolute Error (MAE) |
 |:---------:|:------:|:--------:|
-| ≃ 0.96 |≃ 9.10|≃ 7.31|
+| ≃ 0.992 |≃ R$ 50.46|≃ R$ 40.16|
 
 + O R²-Score mostra que a variabilidade dos dados é bem explicada pelo modelo linear, já que está bem próximo de 1.
-+ O RMSE penaliza mais erros grandes devido à elevação ao quadrado das diferenças, sendo sensível a outliers. O valor obtido (~9.10) indica o erro médio na mesma unidade do colesterol.
-+ O MAE mostra que o modelo erra em média 7.31 de colesterol. Isso pode ser considerado baixos ou alto a depender do contexto clínico e da população.
++ O RMSE penaliza mais erros grandes devido à elevação ao quadrado das diferenças, sendo sensível a outliers. O valor obtido (~R$ 50.46) indica um erro baixo. A título de exemplo, 50 reais corresponde a 5% do aluguel mais barato do dataset.
++ O MAE mostra que o modelo erra em média BRL 40.16. Isso pode ser considerado baixo pela mesma razão do RMSE.
 #### Métricas de Normalidade dos Resíduos
-| P-valor de Shapiro-Wilk | P-valor de Kolmogorov-Smirnov | P-valor de Lilliefors | Anderson 5% |
-|:--:|:--:|:--:|:--:|
-|≃ 0.006|≃ 8*10⁻⁴⁸|≃0.12|stat > critical|
+| P-valor de Shapiro-Wilk | P-valor de Kolmogorov-Smirnov | P-valor de Lilliefors |
+|:--:|:--:|:--:|
+|≃ 0.68|≃ 1.7*10⁻⁸|≃0.24|
 
 > **H0**: *os resíduos seguem uma distribuição normal*<br/>
 > **H1**: *os resíduos não seguem uma distribuição normal*
-- Por ser abaixo de 0.05, Shapiro-Wilk e Kolmogorov-Smirnov rejeitam a hipótese nula por haver evidência de distribuição não normal nos resíduos. OBS: Kolmogorov-SMirnov rejeitam fortemente.
-- Por ser acima de 0.05, Lilliefors aponta evidência de distribuição normal dos resíduos, logo não há evidência suficiente para rejeitar a hipótese nula.
-- Por stat > critical, Anderson-Darling rejeita a hipótese nula por haver evidência de distribuição não normal nos resíduo.
-![QQplot](./dataviz/residuos-qqplot.png)
-O QQ-plot apresenta forte alinhamento dos resíduos à linha teórica (R² ≈ 0.98), indicando aproximação à normalidade, apesar de testes formais apontarem desvios estatisticamente significativos.<br>
-**Por que isso acontece?**<br>
-Isso ocorre pois os testes estatísticos são muito sensíveis a outliers. Nos dados há alguns outliers sobretudo com os pesos dos pacientes, logo é possível explicar o porquê desses outliers existirem no qqplot de resíduos.
+- Por ser abaixo de 0.05, Kolmogorov-Smirnov rejeitam a hipótese nula por haver evidência de distribuição não normal nos resíduos. OBS: Kolmogorov-Smirnov rejeitam fortemente por ser muito próximo de 0.
+- Por ser acima de 0.05, Shapiro-Wilk e Lilliefors aponta evidência de distribuição normal dos resíduos, logo não há evidência suficiente para rejeitar a hipótese nula.
+
+![QQplot](./dataviz/qqplot.png)
+O QQ-plot apresenta alinhamento dos resíduos à linha teórica (R² ≈ 0.975), indicando aproximação à normalidade, apesar de testes formais apontarem desvios estatisticamente significativos.
+
+**Por que isso acontece?**
+
+Isso ocorre pois os testes estatísticos são muito sensíveis a outliers. Nos dados residuais há 1 outlier por exemplo, logo é possível explicar o porquê dessas estatísticas formais não indicarem evidência de distribuição normal.
+
 #### Métricas de Homocedasticidade
 |P-Value de Goldfeld |
 |:--:|
-|≃ 0.98|
+|≃ 0.91|
 
 > **H0**: *os resíduos seguem uma variação constante (há homocedasticidade)*<br/>
 > **H1**: *os resíduos não seguem uma variação constante (há heterocedasticidade)*
 
 Por ser acima de 0.05, o teste de Goldfeld aponta evidência de uma variância aproximadamente constante dos resíduos, logo não rejeita a hipótese nula.
->*OBS: Scatterplot resíduos x colesterol previsto mostra resíduos espalhados sem formar um padrão, o que já indica homocedasticidade*
+
+>*OBS: Scatterplot resíduos x valor de aluguel previsto mostra resíduos espalhados sem formar um padrão, o que já indica homocedasticidade*
 
 ### Conclusão
-O modelo ajustado segue uma regressão linear múltipla onde o colesterol é explicado por uma combinação linear das variáveis transformadas (padronizadas e codificadas), com interceptor de aproximadamente 203.71 e maior influência do peso (coeficiente positivo elevado). 
-#### Melhorias
-![Histograma_Peso](./dataviz/peso-boxplot.png)
+O modelo ajustado segue uma regressão linear múltipla onde o valor do aluguel é explicado por uma combinação linear das variáveis transformadas (padronizadas e codificadas). As métricas mostram boa explicação do dataset pelo modelo com R² Score próximo de 1 e erros toleráveis.
 
-Uma possível melhoria seria extrair mais dados de pessoas com pesos acima de 130 kg, já que atualmente essa faixa cumpre como outlier do modelo, mas ainda sim é importante para os seus cálculos.
+#### Melhorias
+Uma possível melhoria clara é ter mais dados, visto que só há 100 registros no dataset.
+
+Além disso, outros fatores afetam um aluguel, como período do ano, eventos que podem ocorrer na data, os estabelecimentos próximos a ele, estar numa zona nobre da cidade e entre outros fatores.
+
 ### Créditos
-Pedro Malini, 3 de Maio de 2026 
+Pedro Malini, 4 de Maio de 2026 
